@@ -46,49 +46,68 @@ var geoChart = dc.geoChoroplethChart("#country-chooser");
 //
 //     var groupAll = dataSet.groupAll();
 // });
+d3.json("../data/world-countries.json", function (statesJson) {
+    d3.csv("../data/world-food-facts/FoodFacts_small.csv", function (data) {
+        var crsData = crossfilter(data);
 
-var width = 960,
-    height = 400;
+        var countryDimension = crsData.dimension(function (data) {
+           return data['countries'];
+        });
 
-var projection = d3.geo.mercator()
-    .scale(200)
-    .translate([width/2, height]);
+        var countryGrp = countryDimension.group();
 
-function zoomed() {
-    projection
-        .translate(d3.event.translate)
-        .scale(d3.event.scale);
-    geoChart.render();
-}
+        var width = 960,
+            height = 400;
 
-var zoom = d3.behavior.zoom()
-    .translate(projection.translate())
-    .scale(projection.scale())
-    .scaleExtent([height/2, 8 * height])
-    .on("zoom", zoomed);
+        var projection = d3.geo.mercator()
+            .scale(200)
+            .translate([width / 2, height]);
 
-var svg = d3.select("#geo-chart")
-    .attr("width", width)
-    .attr("height", height)
-    .call(zoom);
+        function zoomed() {
+            projection
+                .translate(d3.event.translate)
+                .scale(d3.event.scale);
+            geoChart.render();
+        }
 
-geoChart
-    .projection(projection)
-    .width(1000)
-    .height(400)
-    .transitionDuration(1000)
-    .dimension(countryDim)
-    .group(ctrGroup)
-    .filterHandler(function(dimension, filter){
-        dimension.filter(function(d) {return geoChart.filter() != null ? d.indexOf
-        (geoChart.filter()) >= 0 : true;}); // perform filtering
-        return filter; // return the actual filter value
-    })
-    .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF",
-        "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
-    .colorDomain([0, 200])
-    .colorCalculator(function (d) { return d ? geoChart.colors()(d) : '#ccc'; })
-    .overlayGeoJson(statesJson.features, "state", function (d) { return d.id; })
-    .title(function (d) {
-        return "State: " + d.key + " " + (d.value ? d.value : 0) + " Impressions";
+        var zoom = d3.behavior.zoom()
+            .translate(projection.translate())
+            .scale(projection.scale())
+            .scaleExtent([height / 2, 8 * height])
+            .on("zoom", zoomed);
+
+        var svg = d3.select("#country-chooser")
+            .attr("width", width)
+            .attr("height", height)
+            .call(zoom);
+
+        geoChart
+            .projection(projection)
+            .width(1000)
+            .height(400)
+            .transitionDuration(1000)
+            .dimension(countryDimension)
+            .group(countryGrp)
+            .filterHandler(function (dimension, filter) {
+                dimension.filter(function (d) {
+                    return geoChart.filter() != null ? d.indexOf
+                    (geoChart.filter()) >= 0 : true;
+                }); // perform filtering
+                return filter; // return the actual filter value
+            })
+            .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF",
+                "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
+            .colorDomain([0, 200])
+            .colorCalculator(function (d) {
+                return d ? geoChart.colors()(d) : '#ccc';
+            })
+            .overlayGeoJson(statesJson.features, "state", function (d) {
+                return d.id;
+            })
+            .title(function (d) {
+                return "State: " + d.key + " " + (d.value ? d.value : 0) + " Impressions";
+            });
+
+        console.log("Finished loading.");
     });
+});
