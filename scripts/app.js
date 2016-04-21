@@ -7,7 +7,7 @@ var globalData = null,
     filteredData = null,
     mapContainer = $("#country-chooser");
 var geoChart = dc.geoChoroplethChart("#country-chooser"),
-    // fatChart = dc.lineChart("#fat-amount"),
+    fatChart = dc.lineChart("#fat-amount"),
     sugarChart = dc.lineChart("#sugar-amount");
 
 var width = parseFloat(mapContainer.css('width').replace("px", "")),
@@ -66,6 +66,48 @@ var setup = {
             .title(function (d) {
                 return "Country: " + d.key + " " + (d.value ? d.value : 0) + " Products";
             });
+    },
+    setupSugarChart: function (crsData) {
+        var sugarDimension = crsData.dimension(function (data) {
+            return Math.floor(data['sugars_100g'] / 10);
+        });
+
+        var sugarGroup = sugarDimension.group().reduceCount();
+
+        // Set up fat and sugar line charts.
+        sugarChart
+            .width(400)
+            .height(300)
+            .transitionDuration(1000)
+            .margins({top: 30, right: 50, bottom: 25, left: 40})
+            .dimension(sugarDimension)
+            .x(d3.scale.linear().domain([0, 10]))
+            .elasticY(true)
+            .group(sugarGroup)
+            .colors(d3.scale.linear()
+                .domain([0, 400, 10000])
+                .range(["#004d40", "#004d40", "#004d40"]));
+    },
+    setupFatChart: function (crsData) {
+        var fatDimension = crsData.dimension(function (data) {
+            return Math.floor(data['fat_100g'] / 10);
+        });
+
+        var fatGroup = fatDimension.group().reduceCount();
+
+        // Set up fat and sugar line charts.
+        fatChart
+            .width(400)
+            .height(300)
+            .transitionDuration(1000)
+            .margins({top: 30, right: 50, bottom: 25, left: 40})
+            .dimension(fatDimension)
+            .x(d3.scale.linear().domain([0, 10]))
+            .elasticY(true)
+            .group(fatGroup)
+            .colors(d3.scale.linear()
+                .domain([0, 400, 10000])
+                .range(["#004d40", "#004d40", "#004d40"]));
     },
     cleanData: function (data) {
         data.forEach(function (d) {
@@ -193,22 +235,8 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
 
         setup.setupWorldMap(countryDimension, countryGrp, world_countries);
 
-        var sugarDimension = crsData.dimension(function (data) {
-           return Math.floor(data['sugars_100g'] / 10);
-        });
-
-        var sugarGroup = sugarDimension.group().reduceCount();
-
-        // Set up fat and sugar line charts.
-        sugarChart
-            .width(400)
-            .height(300)
-            .transitionDuration(1000)
-            .margins({top: 30, right: 50, bottom: 25, left: 40})
-            .dimension(countryDimension)
-            .x(d3.time.scale().domain([0, 10]))
-            .elasticY(true)
-            .group(sugarGroup);
+        setup.setupSugarChart(crsData);
+        setup.setupFatChart(crsData);
 
         dc.renderAll();
         console.log("Finished loading.");

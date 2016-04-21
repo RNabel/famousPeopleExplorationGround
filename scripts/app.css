@@ -4,7 +4,7 @@ g.countries.selected {
 }
 
 g.countries.selected > path {
-    /*fill: #00bfa5*/
+    fill: #009688
 }
 
 g.countries.deselected {
