@@ -79,14 +79,20 @@ var setup = {
             .width(400)
             .height(300)
             .transitionDuration(1000)
-            .margins({top: 30, right: 50, bottom: 25, left: 40})
+            .margins({top: 30, right: 50, bottom: 35, left: 50})
             .dimension(sugarDimension)
             .x(d3.scale.linear().domain([0, 10]))
             .elasticY(true)
             .group(sugarGroup)
-            .colors(d3.scale.linear()
-                .domain([0, 400, 10000])
-                .range(["#004d40", "#004d40", "#004d40"]));
+            .colors(d3.scale.ordinal().domain([0]).range(["#004d40"]));
+
+        // Adapt tick format.
+        sugarChart.xAxis().tickFormat(function (d) {
+            return (d * 10) + "%";
+        });
+
+        sugarChart.xAxisLabel("Percentage of fat")
+            .yAxisLabel("Number of items.");
     },
     setupFatChart: function (crsData) {
         var fatDimension = crsData.dimension(function (data) {
@@ -100,14 +106,20 @@ var setup = {
             .width(400)
             .height(300)
             .transitionDuration(1000)
-            .margins({top: 30, right: 50, bottom: 25, left: 40})
+            .margins({top: 30, right: 50, bottom: 35, left: 50})
             .dimension(fatDimension)
             .x(d3.scale.linear().domain([0, 10]))
             .elasticY(true)
             .group(fatGroup)
-            .colors(d3.scale.linear()
-                .domain([0, 400, 10000])
-                .range(["#004d40", "#004d40", "#004d40"]));
+            .colors(d3.scale.ordinal().domain([0]).range(["#004d40"]));
+
+        // Adapt tick format.
+        fatChart.xAxis().tickFormat(function (d) {
+            return (d * 10) + "%";
+        });
+
+        fatChart.xAxisLabel("Percentage of fat")
+            .yAxisLabel("Number of items.");
     },
     cleanData: function (data) {
         data.forEach(function (d) {
