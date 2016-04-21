@@ -1,0 +1,20 @@
+g.countries.selected {
+    stroke: #00bfa5;
+    stroke-width: 3px;
+}
+
+g.countries.selected > path {
+    /*fill: #00bfa5*/
+}
+
+g.countries.deselected {
+    stroke: #4db6ac;
+}
+
+g.countries {
+    stroke: #009688;
+}
+
+body {
+    background: #FCFCFC;
+}

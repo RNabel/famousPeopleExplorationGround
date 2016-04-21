@@ -46,15 +46,18 @@ var geoChart = dc.geoChoroplethChart("#country-chooser");
 //
 //     var groupAll = dataSet.groupAll();
 // });
-d3.json("../data/world-countries.json", function (statesJson) {
-    d3.csv("../data/world-food-facts/FoodFacts_small.csv", function (data) {
+d3.json("../data/world-countries.json", function (error, world_countries) {
+    d3.csv("../data/world-food-facts/FoodFacts_filtered.csv", function (data) {
         var crsData = crossfilter(data);
 
         var countryDimension = crsData.dimension(function (data) {
-           return data['countries'];
+           return data['countries_en'].split(',');
         });
 
-        var countryGrp = countryDimension.group();
+        var countryGrp = countryDimension.group().reduceCount();
+
+        console.log(countryDimension.top(10));
+        console.log(countryGrp.all().length);
 
         var width = 960,
             height = 400;
@@ -81,33 +84,43 @@ d3.json("../data/world-countries.json", function (statesJson) {
             .attr("height", height)
             .call(zoom);
 
+        var path = d3.geo.path()
+            .projection(projection);
+
         geoChart
             .projection(projection)
             .width(1000)
             .height(400)
-            .transitionDuration(1000)
+            // .transitionDuration(1000)
             .dimension(countryDimension)
             .group(countryGrp)
-            .filterHandler(function (dimension, filter) {
-                dimension.filter(function (d) {
-                    return geoChart.filter() != null ? d.indexOf
-                    (geoChart.filter()) >= 0 : true;
-                }); // perform filtering
-                return filter; // return the actual filter value
-            })
-            .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF",
-                "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
-            .colorDomain([0, 200])
+            // .filterHandler(function (dimension, filter) {
+            //     dimension.filter(function (d) {
+            //         return geoChart.filter() != null ? d.indexOf
+            //         (geoChart.filter()) >= 0 : true;
+            //     }); // perform filtering
+            //     return filter; // return the actual filter value
+            // })
+            .colors(d3.scale.linear()
+                .domain([0, 400, 10000])
+                .range(["#e0f2f1", "#26a69a", "#004d40"]))
             .colorCalculator(function (d) {
-                return d ? geoChart.colors()(d) : '#ccc';
+                var colorToReturn;
+                if (d) {
+                    colorToReturn = geoChart.colors()(d);
+                } else {
+                    colorToReturn = "#F5F2F0"
+                }
+                return colorToReturn;
             })
-            .overlayGeoJson(statesJson.features, "state", function (d) {
-                return d.id;
+            .overlayGeoJson(world_countries.features, "countries", function (d) {
+                return d.properties.name;
             })
             .title(function (d) {
-                return "State: " + d.key + " " + (d.value ? d.value : 0) + " Impressions";
+                return "Country: " + d.key + " " + (d.value ? d.value : 0) + " Products";
             });
 
+        dc.renderAll();
         console.log("Finished loading.");
     });
 });
