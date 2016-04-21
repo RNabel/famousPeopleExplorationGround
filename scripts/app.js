@@ -4,54 +4,19 @@
 var globalData = null,
     dataSet = null,
     filteredDataset = null,
-    filteredData = null;
+    filteredData = null,
+    mapContainer = $("#country-chooser");
 var geoChart = dc.geoChoroplethChart("#country-chooser");
 
+var width = parseFloat(mapContainer.css('width').replace("px", "")),
+    height = 500;
 
-// d3.csv("../data/world-food-facts/FoodFacts.csv", function (data) {
-//     console.log("data loaded.");
-//
-//     globalData = data;
-//     dataSet = crossfilter(data);
-//     filteredDataset = data.slice();
-//     filteredDataset = filteredDataset.filter(function (record) {
-//         return record.fat_100g !== "";
-//     });
-//
-//     filteredData = crossfilter(filteredDataset);
-//
-//     var countries = filteredData.dimension(function(d) {
-//         return d['countries_en'];
-//     });
-//
-//     var reducer = reductio().count(true);
-//     var countryGroupCount = countries.group(function(d) {
-//         return d.fat_100g;
-//     });
-//
-//     mapVisual
-//         .width(300)
-//         .height(300)
-//         .dimension(countries)
-//         .group(countryGroupCount)
-//         .colors(d3.scale.quantize().range(
-//             ["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
-//         .colorDomain([0, 200])
-//         .colorCalculator(function (d) { return d ? usChart.colors()(d) : '#ccc'; })
-//         .overlayGeoJson(statesJson.features, "state", function (d) {
-//             return d.properties.name;
-//         });
-//
-//     dc.renderAll();
-//
-//     var groupAll = dataSet.groupAll();
-// });
 d3.json("../data/world-countries.json", function (error, world_countries) {
     d3.csv("../data/world-food-facts/FoodFacts_filtered.csv", function (data) {
         var crsData = crossfilter(data);
 
         var countryDimension = crsData.dimension(function (data) {
-           return data['countries_en'].split(',');
+            return data['countries_en'].split(',');
         });
 
         var countryGrp = countryDimension.group().reduceCount();
@@ -59,10 +24,8 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
         console.log(countryDimension.top(10));
         console.log(countryGrp.all().length);
 
-        var width = 960,
-            height = 400;
-
         var projection = d3.geo.mercator()
+            // .center([-100,0])
             .scale(200)
             .translate([width / 2, height]);
 
@@ -80,8 +43,8 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
             .on("zoom", zoomed);
 
         var svg = d3.select("#country-chooser")
-            .attr("width", width)
-            .attr("height", height)
+            // .attr("width", 1000)
+            // .attr("height", 400)
             .call(zoom);
 
         var path = d3.geo.path()
@@ -89,18 +52,11 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
 
         geoChart
             .projection(projection)
-            .width(1000)
-            .height(400)
-            // .transitionDuration(1000)
+            .width(parseFloat(mapContainer.css('width').replace("px", "")))
+            .height(600)
+            .transitionDuration(1000)
             .dimension(countryDimension)
             .group(countryGrp)
-            // .filterHandler(function (dimension, filter) {
-            //     dimension.filter(function (d) {
-            //         return geoChart.filter() != null ? d.indexOf
-            //         (geoChart.filter()) >= 0 : true;
-            //     }); // perform filtering
-            //     return filter; // return the actual filter value
-            // })
             .colors(d3.scale.linear()
                 .domain([0, 400, 10000])
                 .range(["#e0f2f1", "#26a69a", "#004d40"]))

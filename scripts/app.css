@@ -1,5 +1,5 @@
 g.countries.selected {
-    stroke: #00bfa5;
+    stroke: #1de9b6;
     stroke-width: 3px;
 }
 
@@ -9,6 +9,7 @@ g.countries.selected > path {
 
 g.countries.deselected {
     stroke: #4db6ac;
+    opacity: 0.7;
 }
 
 g.countries {
@@ -17,4 +18,8 @@ g.countries {
 
 body {
     background: #FCFCFC;
+}
+
+g {
+    transition-duration: 0.7s
 }
