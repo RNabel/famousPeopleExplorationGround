@@ -9,6 +9,7 @@
     <script src="../lib/dc.js"></script>
     <script src="../lib/reductio.js"></script>
     <script src="//d3js.org/topojson.v0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../lib/dc.css">
 
     <!-- Material Design -->
     <script src="../lib/jquery-2.2.3.js"></script>
@@ -18,13 +19,45 @@
     <link rel="stylesheet" type="text/css" href="app.css">
 </head>
 <body>
-<div id="container">
-    <h1>World Food Facts Exploration Ground</h1>
-    <div class="visualisation">
-        <div id="country-chooser">
-
+<div class="container">
+    <div class="row center-align">
+        <div class="visualisation">
+            <div id="country-chooser">
+                <h1>
+                    World Food Facts Exploration Ground
+                </h1>
+                <p>&nbsp;
+                    <a class='reset'
+                       href='javascript:geoChart.filterAll();dc.redrawAll();'
+                       style="display: none">reset</a>
+                    <span class="reset" style="display: none">
+                         | Current filter:
+                        <span class="filter" style="display: none;"></span>
+                    </span>
+                </p>
+            </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col s4">
+            <div id="fat-amount"><h5>Prevalence of fat <a class='reset'
+                                                          href='javascript:fatChart.filterAll();dc.redrawAll();'
+                                                          style="display: none">reset filters</a></h5></div>
+        </div>
+        <div class="col s4">
+            <div id="sugar-amount"><h5>Prevalence of sugar <a class='reset'
+                                                              href='javascript:sugarChart.filterAll();dc.redrawAll();'
+                                                              style="display: none">reset filters</a></h5></div>
+        </div>
+        <div class="col s4">
+            <div id="custom-amount"><h5>Prevalence of  <div class="input-field col s12">
+                <select>
+                    <option value="" disabled selected>Choose your option</option>
+                </select>
+                <label>Select the category</label>
+            </div>
+        </div>
 
 </div>
 <script src="../lib/js/materialize.js"></script>
