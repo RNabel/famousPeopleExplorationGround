@@ -69,7 +69,7 @@ var setup = {
     },
     setupSugarChart: function (crsData) {
         var sugarDimension = crsData.dimension(function (data) {
-            return Math.floor(data['sugars_100g'] / 10);
+            return data.sugars_group;
         });
 
         var sugarGroup = sugarDimension.group().reduceCount();
@@ -91,12 +91,12 @@ var setup = {
             return (d * 10) + "%";
         });
 
-        sugarChart.xAxisLabel("Percentage of fat")
-            .yAxisLabel("Number of items.");
+        sugarChart.xAxisLabel("Percentage of sugar")
+            .yAxisLabel("Number of items");
     },
     setupFatChart: function (crsData) {
         var fatDimension = crsData.dimension(function (data) {
-            return Math.floor(data['fat_100g'] / 10);
+            return data.fat_group;
         });
 
         var fatGroup = fatDimension.group().reduceCount();
@@ -119,7 +119,124 @@ var setup = {
         });
 
         fatChart.xAxisLabel("Percentage of fat")
-            .yAxisLabel("Number of items.");
+            .yAxisLabel("Number of items");
+    },
+    setupSelector: function (data) {
+        var keys = keys = ['no_nutriments',
+            'additives_n',
+            'ingredients_from_palm_oil_n',
+            'ingredients_from_palm_oil',
+            'ingredients_that_may_be_from_palm_oil_n',
+            'ingredients_that_may_be_from_palm_oil',
+            'nutrition_grade_uk',
+            'energy_100g',
+            'energy_from_fat_100g',
+            'fat_100g',
+            'saturated_fat_100g',
+            'butyric_acid_100g',
+            'caproic_acid_100g',
+            'caprylic_acid_100g',
+            'capric_acid_100g',
+            'lauric_acid_100g',
+            'myristic_acid_100g',
+            'palmitic_acid_100g',
+            'stearic_acid_100g',
+            'arachidic_acid_100g',
+            'behenic_acid_100g',
+            'lignoceric_acid_100g',
+            'cerotic_acid_100g',
+            'montanic_acid_100g',
+            'melissic_acid_100g',
+            'monounsaturated_fat_100g',
+            'polyunsaturated_fat_100g',
+            'omega_3_fat_100g',
+            'alpha_linolenic_acid_100g',
+            'eicosapentaenoic_acid_100g',
+            'docosahexaenoic_acid_100g',
+            'omega_6_fat_100g',
+            'linoleic_acid_100g',
+            'arachidonic_acid_100g',
+            'gamma_linolenic_acid_100g',
+            'dihomo_gamma_linolenic_acid_100g',
+            'omega_9_fat_100g',
+            'oleic_acid_100g',
+            'elaidic_acid_100g',
+            'gondoic_acid_100g',
+            'mead_acid_100g',
+            'erucic_acid_100g',
+            'nervonic_acid_100g',
+            'trans_fat_100g',
+            'cholesterol_100g',
+            'carbohydrates_100g',
+            'sugars_100g',
+            'sucrose_100g',
+            'glucose_100g',
+            'fructose_100g',
+            'lactose_100g',
+            'maltose_100g',
+            'maltodextrins_100g',
+            'starch_100g',
+            'polyols_100g',
+            'fiber_100g',
+            'proteins_100g',
+            'casein_100g',
+            'serum_proteins_100g',
+            'nucleotides_100g',
+            'salt_100g',
+            'sodium_100g',
+            'alcohol_100g',
+            'vitamin_a_100g',
+            'beta_carotene_100g',
+            'vitamin_d_100g',
+            'vitamin_e_100g',
+            'vitamin_k_100g',
+            'vitamin_c_100g',
+            'vitamin_b1_100g',
+            'vitamin_b2_100g',
+            'vitamin_pp_100g',
+            'vitamin_b6_100g',
+            'vitamin_b9_100g',
+            'vitamin_b12_100g',
+            'biotin_100g',
+            'pantothenic_acid_100g',
+            'silica_100g',
+            'bicarbonate_100g',
+            'potassium_100g',
+            'chloride_100g',
+            'calcium_100g',
+            'phosphorus_100g',
+            'iron_100g',
+            'magnesium_100g',
+            'zinc_100g',
+            'copper_100g',
+            'manganese_100g',
+            'fluoride_100g',
+            'selenium_100g',
+            'chromium_100g',
+            'molybdenum_100g',
+            'iodine_100g',
+            'caffeine_100g',
+            'taurine_100g',
+            'ph_100g',
+            'fruits_vegetables_nuts_100g',
+            'collagen_meat_protein_ratio_100g',
+            'cocoa_100g',
+            'chlorophyl_100g',
+            'carbon_footprint_100g',
+            'nutrition_score_fr_100g',
+            'nutrition_score_uk_100g'];
+
+        // Add each key to the select.
+        var $selectEl = $('select');
+        var humanKeys = keys.forEach(function (key) {
+            var humanKey = key.replace("_100g", " per 100g").replace("_", " ");
+            humanKey = humanKey.substr(0, 1).toUpperCase() + humanKey.substr(1);
+            $selectEl.append(
+                $('<option>').attr('value', key).text(humanKey).css('text-transform', 'capitalize')
+            )
+        });
+
+        $selectEl.material_select();
     },
     cleanData: function (data) {
         data.forEach(function (d) {
@@ -136,6 +253,7 @@ var setup = {
             d.energy_100g = parseFloat(d.energy_100g);
             d.energy_from_fat_100g = parseFloat(d.energy_from_fat_100g);
             d.fat_100g = parseFloat(d.fat_100g);
+            d.fat_group = Math.floor(d.fat_100g / 10);
             d.saturated_fat_100g = parseFloat(d.saturated_fat_100g);
             d.butyric_acid_100g = parseFloat(d.butyric_acid_100g);
             d.caproic_acid_100g = parseFloat(d.caproic_acid_100g);
@@ -173,6 +291,7 @@ var setup = {
             d.cholesterol_100g = parseFloat(d.cholesterol_100g);
             d.carbohydrates_100g = parseFloat(d.carbohydrates_100g);
             d.sugars_100g = parseFloat(d.sugars_100g);
+            d.sugars_group = Math.floor(d.sugars_100g / 10);
             d.sucrose_100g = parseFloat(d.sucrose_100g);
             d.glucose_100g = parseFloat(d.glucose_100g);
             d.fructose_100g = parseFloat(d.fructose_100g);
@@ -234,9 +353,11 @@ var setup = {
     }
 };
 
+
 d3.json("../data/world-countries.json", function (error, world_countries) {
     d3.csv("../data/world-food-facts/FoodFacts_filtered.csv", function (data) {
         data = setup.cleanData(data);
+        dataSet = data;
         var crsData = crossfilter(data);
 
         var countryDimension = crsData.dimension(function (data) {
@@ -249,7 +370,7 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
 
         setup.setupSugarChart(crsData);
         setup.setupFatChart(crsData);
-
+        setup.setupSelector(data);
         dc.renderAll();
         console.log("Finished loading.");
     });
