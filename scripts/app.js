@@ -238,7 +238,7 @@ var setup = {
 
             var option = $('<option>').attr('value', key).text(humanKey).css('text-transform', 'capitalize');
 
-            if (count==4) {
+            if (count == 4) {
                 option.attr('selected');
             }
             count++;
@@ -248,7 +248,7 @@ var setup = {
 
         $selectEl.material_select();
     },
-    setupCustomChart: function(data) {
+    setupCustomChart: function (data) {
         var selector = $('#custom-chooser');
 
         var customChart = dc.lineChart('#custom-quantity');
@@ -273,7 +273,7 @@ var setup = {
             .colors(d3.scale.ordinal().domain([0]).range(["#004d40"]));
 
         // Add event listener.
-        $(document).on('change', '#custom-chooser', function(data) {
+        $(document).on('change', '#custom-chooser', function (data) {
             var selected = $(data.target).val();
             dimension = globalCrsData.dimension(function (d) {
                 var returnVal = d[selected];
@@ -281,7 +281,12 @@ var setup = {
             });
 
             group = dimension.group().reduceCount();
-            customChart.dimension(dimension).group(group);
+            customChart
+                .dimension(dimension)
+                .group(group)
+                .x(d3.scale.linear().domain(dataSet.map(function (d) {
+                    return d[selected];
+                })));
             customChart.render();
         })
     },
