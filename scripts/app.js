@@ -1,7 +1,7 @@
 /**
  * Created by rn30 on 21/04/16.
  */
-var globalData = null,
+var globalCrsData = null,
     dataSet = null,
     filteredDataset = null,
     filteredData = null,
@@ -12,6 +12,9 @@ var geoChart = dc.geoChoroplethChart("#country-chooser"),
 
 var width = parseFloat(mapContainer.css('width').replace("px", "")),
     height = 500;
+
+var CHART_HEIGHT = 300,
+    CHART_WIDTH = 400;
 
 var setup = {
     setupWorldMap: function (countryDimension, countryGrp, world_countries) {
@@ -76,8 +79,8 @@ var setup = {
 
         // Set up fat and sugar line charts.
         sugarChart
-            .width(400)
-            .height(300)
+            .width(CHART_WIDTH)
+            .height(CHART_HEIGHT)
             .transitionDuration(1000)
             .margins({top: 30, right: 50, bottom: 35, left: 50})
             .dimension(sugarDimension)
@@ -103,8 +106,8 @@ var setup = {
 
         // Set up fat and sugar line charts.
         fatChart
-            .width(400)
-            .height(300)
+            .width(CHART_WIDTH)
+            .height(CHART_HEIGHT)
             .transitionDuration(1000)
             .margins({top: 30, right: 50, bottom: 35, left: 50})
             .dimension(fatDimension)
@@ -228,15 +231,59 @@ var setup = {
 
         // Add each key to the select.
         var $selectEl = $('select');
+        var count = 0;
         var humanKeys = keys.forEach(function (key) {
-            var humanKey = key.replace("_100g", " per 100g").replace("_", " ");
+            var humanKey = key.replace("_100g", " per 100g").replace(/_/g, " ");
             humanKey = humanKey.substr(0, 1).toUpperCase() + humanKey.substr(1);
-            $selectEl.append(
-                $('<option>').attr('value', key).text(humanKey).css('text-transform', 'capitalize')
-            )
+
+            var option = $('<option>').attr('value', key).text(humanKey).css('text-transform', 'capitalize');
+
+            if (count==4) {
+                option.attr('selected');
+            }
+            count++;
+
+            $selectEl.append(option);
         });
 
         $selectEl.material_select();
+    },
+    setupCustomChart: function(data) {
+        var selector = $('#custom-chooser');
+
+        var customChart = dc.lineChart('#custom-quantity');
+        var newChoice = selector.val();
+
+        var dimension = globalCrsData.dimension(function (data) {
+            return data.fat_group;
+        });
+
+        var group = dimension.group().reduceCount();
+
+        customChart
+            .width(CHART_WIDTH)
+            .height(CHART_HEIGHT)
+            .transitionDuration(1000)
+            .margins({top: 30, right: 50, bottom: 35, left: 50})
+            .dimension(dimension)
+            .elasticX(true)
+            .x(d3.scale.linear().domain([0, 10]))
+            .elasticY(true)
+            .group(group)
+            .colors(d3.scale.ordinal().domain([0]).range(["#004d40"]));
+
+        // Add event listener.
+        $(document).on('change', '#custom-chooser', function(data) {
+            var selected = $(data.target).val();
+            dimension = globalCrsData.dimension(function (d) {
+                var returnVal = d[selected];
+                return isNaN(returnVal) ? 0 : returnVal;
+            });
+
+            group = dimension.group().reduceCount();
+            customChart.dimension(dimension).group(group);
+            customChart.render();
+        })
     },
     cleanData: function (data) {
         data.forEach(function (d) {
@@ -359,6 +406,7 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
         data = setup.cleanData(data);
         dataSet = data;
         var crsData = crossfilter(data);
+        globalCrsData = crsData;
 
         var countryDimension = crsData.dimension(function (data) {
             return data['countries_en'].split(',');
@@ -371,6 +419,9 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
         setup.setupSugarChart(crsData);
         setup.setupFatChart(crsData);
         setup.setupSelector(data);
+
+        setup.setupCustomChart(data);
+
         dc.renderAll();
         console.log("Finished loading.");
     });

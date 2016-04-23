@@ -40,27 +40,32 @@
     </div>
 
     <div class="row">
-        <div class="col s4">
+        <div class="col s6">
             <div id="fat-amount"><h5>Prevalence of fat <a class='reset'
                                                           href='javascript:fatChart.filterAll();dc.redrawAll();'
                                                           style="display: none">reset filters</a></h5></div>
         </div>
-        <div class="col s4">
+        <div class="col s6">
             <div id="sugar-amount"><h5>Prevalence of sugar <a class='reset'
                                                               href='javascript:sugarChart.filterAll();dc.redrawAll();'
                                                               style="display: none">reset filters</a></h5></div>
         </div>
-        <div class="col s4">
-            <div id="custom-amount"><h5>Prevalence of  <div class="input-field col s12">
-                <select>
-                    <option value="" disabled selected>Choose your option</option>
-                </select>
-                <label>Select the category</label>
+        </div>
+    <div class="row">
+        <div class="col s6">
+            <div id="custom-quantity">
+                <h5>Prevalence of </h5>
+                <div class="input-field col s12">
+                    <select id="custom-chooser">
+                    </select>
+                    <label for="custom-chooser">Select the category</label>
+                </div>
             </div>
         </div>
+    </div>
 
-</div>
-<script src="../lib/js/materialize.js"></script>
-<script src="app.js"></script>
+    </div>
+    <script src="../lib/js/materialize.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
