@@ -67,7 +67,7 @@ var setup = {
                 return d.id;
             })
             .title(function (d) {
-                return "Country: " + d.key + " " + (d.value ? d.value : 0) + " Products";
+                return "Country code: " + d.key + "; " + (d.value ? d.value : 0) + " famous people";
             });
     },
     // setupSugarChart: function (crsData) {
