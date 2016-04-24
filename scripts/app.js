@@ -7,7 +7,7 @@ var globalCrsData = null,
 var geoChart = dc.geoChoroplethChart("#country-chooser"),
     genderChart = dc.pieChart("#gender-chart"),
     timelineChart = dc.lineChart("#timeline-chart"),
-    totalCount = dc.dataCount("#data-count"),
+    // totalCount = dc.dataCount("#data-count"),
     tableChart = dc.dataTable("#table-chart"),
     industriesChart = dc.pieChart('#industries-chart');
 
@@ -109,11 +109,11 @@ var setup = {
 
     // FIXME not working.
     setupDataCount: function (crsData) {
-        var dimension = crsData;
-        var group = crsData.groupAll();
+        var all = crsData.groupAll();
 
-        totalCount
-            .dimension(dimension).group(group);
+        dc.dataCount('.dc-data-count')
+            .dimension(crsData)
+            .group(all);
     },
 
     setupDataTable: function (crsData) {
