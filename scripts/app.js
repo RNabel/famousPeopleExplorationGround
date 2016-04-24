@@ -8,7 +8,8 @@ var geoChart = dc.geoChoroplethChart("#country-chooser"),
     genderChart = dc.pieChart("#gender-chart"),
     timelineChart = dc.lineChart("#timeline-chart"),
     totalCount = dc.dataCount("#data-count"),
-    tableChart = dc.dataTable("#table-chart");
+    tableChart = dc.dataTable("#table-chart"),
+    industriesChart = dc.pieChart('#industries-chart');
 
 var width = parseFloat(mapContainer.css('width').replace("px", "")),
     height = 500;
@@ -130,6 +131,23 @@ var setup = {
             ])
     },
 
+    setupIndustriesChart: function (crsData) {
+        var industriesDimension = crsData.dimension(function (data) {
+            return data.industry;
+        });
+
+        var industriesGroup = industriesDimension.group();
+
+        // Set up fat and sugar line charts.
+        industriesChart
+            .width(CHART_WIDTH)
+            .height(CHART_HEIGHT)
+            .transitionDuration(1000)
+            .dimension(industriesDimension)
+            .group(industriesGroup)
+            .colors(d3.scale.category20b());
+    },
+
     /**
      * Sets up and converts the data.
      * @param data
@@ -171,6 +189,7 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
         setup.setupTimelineChart(crsData);
         setup.setupDataCount(crsData);
         setup.setupDataTable(crsData);
+        setup.setupIndustriesChart(crsData);
 
         dc.renderAll();
         console.log("Finished loading.");
