@@ -128,7 +128,15 @@ var setup = {
             })
             .columns([
                 "",
-                "name"
+                "name",
+                {
+                    label: "Wikipedia link",
+                    format: function (d) {
+                        var title = d.name.replace(/ /g, "_")
+                        var url = "https://en.wikipedia.org/wiki/" + title;
+                        return url;
+                    }
+                }
             ])
     },
 
