@@ -7,7 +7,7 @@ var globalCrsData = null,
 var geoChart = dc.geoChoroplethChart("#country-chooser"),
     genderChart = dc.pieChart("#gender-chart"),
     timelineChart = dc.lineChart("#timeline-chart"),
-    // totalCount = dc.dataCount("#data-count"),
+// totalCount = dc.dataCount("#data-count"),
     tableChart = dc.dataTable("#table-chart"),
     industriesChart = dc.pieChart('#industries-chart');
 
@@ -85,10 +85,10 @@ var setup = {
             .transitionDuration(1000)
             .dimension(genderDimension)
             .group(genderGroup)
-            .colors(d3.scale.ordinal().domain([0,1]).range(["#4db6ac", "#009688"]));
+            .colors(d3.scale.ordinal().domain([0, 1]).range(["#4db6ac", "#009688"]));
     },
 
-    setupTimelineChart: function(crsData) {
+    setupTimelineChart: function (crsData) {
         var timeDimension = crsData.dimension(function (data) {
             return data.birthyear_date;
         });
@@ -127,7 +127,8 @@ var setup = {
                 return d.birthyear_date.getFullYear()
             })
             .columns([
-                function(d) {return d.name}
+                "",
+                "name"
             ])
     },
 
@@ -154,14 +155,12 @@ var setup = {
      * @returns {{}}
      */
     cleanData: function (data) {
-        var dateFormat = d3.time.format('%Y');
-        var numberFormat = d3.format('.2f');
         data.forEach(function (d) {
             // Convert dates.
             d.numlangs = parseInt(d.numlangs);
             d.country = d.countryCode3;
-            d.birthyear_date = dateFormat.parse(d.birthyear);
             d.birthyear = parseInt(d.birthyear);
+            d.birthyear_date = new Date(d.birthyear, 0);
             d.TotalPageViews = parseInt(d.TotalPageViews);
             d.PageViewsEnglish = parseInt(d.PageViewsEnglish);
             d.PageViewsNonEnglish = parseInt(d.PageViewsNonEnglish);

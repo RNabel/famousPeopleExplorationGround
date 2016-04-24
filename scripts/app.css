@@ -23,3 +23,7 @@ body {
 g {
     transition-duration: 0.7s
 }
+
+td.dc-table-label {
+    font-weight: bold;
+}
