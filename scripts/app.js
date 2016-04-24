@@ -7,7 +7,6 @@ var globalCrsData = null,
 var geoChart = dc.geoChoroplethChart("#country-chooser"),
     genderChart = dc.pieChart("#gender-chart"),
     timelineChart = dc.lineChart("#timeline-chart"),
-// totalCount = dc.dataCount("#data-count"),
     tableChart = dc.dataTable("#table-chart"),
     industriesChart = dc.pieChart('#industries-chart');
 
@@ -53,7 +52,7 @@ var setup = {
             .dimension(countryDimension)
             .group(countryGrp)
             .colors(d3.scale.linear()
-                .domain([0, 400, 10000])
+                .domain([0, 400, 4000])
                 .range(["#e0f2f1", "#26a69a", "#004d40"]))
             .colorCalculator(function (d) {
                 var colorToReturn;
@@ -105,6 +104,7 @@ var setup = {
             // .alwaysUseRounding(true)
             .xUnits(d3.time.months)
             .elasticY(true);
+        timelineChart.ordinalColors(["#004d40"]);
     },
 
     // FIXME not working.
@@ -142,12 +142,7 @@ var setup = {
                 return d.birthyear;
             })
             .order(d3.ascending)
-            .on('renderlet', function (table) {
-                $(".dc-table-column._2").each(function (ind, d) {
-                    var el = $(d);
-                    el.html('<a href="' + el.text() +'" target="_blank">' + el.text() +'</a>')
-                })
-            });
+            .on('renderlet', handlers.handleTableUpdate);
     },
 
     setupIndustriesChart: function (crsData) {
@@ -184,6 +179,28 @@ var setup = {
             d.PageViewsNonEnglish = parseInt(d.PageViewsNonEnglish);
         });
         return data;
+    }
+};
+
+var handlers = {
+    handleTableUpdate: function (table) {
+
+        // Convert textual links to actual links.
+        $(".dc-table-column._2").each(function (ind, d) {
+            var el = $(d);
+            // Add link.
+            var insertionHTML = '<a href="' + el.text() + '" target="_blank">' + el.text() + '</a>';
+
+            // Add button
+            insertionHTML += '<a class="waves-effect waves-light btn info-button" style="float: right;">Expand</a>';
+
+            // Add content.
+            el.html(insertionHTML);
+            // Add event listener to fetch more information.
+            $('.info-button').unbind().click(function (d) {
+                console.log(d);
+            });
+        });
     }
 };
 

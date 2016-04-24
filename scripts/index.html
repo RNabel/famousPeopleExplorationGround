@@ -22,10 +22,10 @@
 <div class="container">
     <div class="row center-align">
         <div class="visualisation">
+            <h1>
+                Famous People Exploration Ground
+            </h1>
             <div id="country-chooser">
-                <h1>
-                    World Food Facts Exploration Ground
-                </h1>
                 <p>&nbsp;
                     <a class='reset'
                        href='javascript:geoChart.filterAll();dc.redrawAll();'
@@ -52,24 +52,22 @@
 
     <div class="row">
         <div class="col s6">
-            <div id="gender-chart"><h5>Gender chart <a class='reset'
-                                                          href='javascript:genderChart.filterAll();dc.redrawAll();'
-                                                          style="display: none">reset filters</a></h5></div>
+            <div id="gender-chart"><h5>Gender<a class='reset'
+                                                       href='javascript:genderChart.filterAll();dc.redrawAll();'
+                                                       style="display: none">reset filters</a></h5></div>
         </div>
         <div class="col s6">
             <div id="industries-chart"><h5>Industries <a class='reset'
-                                                              href='javascript:industriesChart.filterAll();dc.redrawAll();'
-                                                              style="display: none">reset filters</a></h5></div>
+                                                         href='javascript:industriesChart.filterAll();dc.redrawAll();'
+                                                         style="display: none">reset filters</a></h5></div>
         </div>
-        </div>
+    </div>
     <div class="row">
-        <table class="col s12" id="table-chart">
-
-        </table>
+        <table class="col s12" id="table-chart"></table>
     </div>
 
-    </div>
-    <script src="../lib/js/materialize.js"></script>
-    <script src="app.js"></script>
+</div>
+<script src="../lib/js/materialize.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
