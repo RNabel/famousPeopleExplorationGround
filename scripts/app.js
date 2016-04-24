@@ -132,12 +132,22 @@ var setup = {
                 {
                     label: "Wikipedia link",
                     format: function (d) {
-                        var title = d.name.replace(/ /g, "_")
+                        var title = d.name.replace(/ /g, "_");
                         var url = "https://en.wikipedia.org/wiki/" + title;
                         return url;
                     }
                 }
             ])
+            .sortBy(function (d) {
+                return d.birthyear;
+            })
+            .order(d3.ascending)
+            .on('renderlet', function (table) {
+                $(".dc-table-column._2").each(function (ind, d) {
+                    var el = $(d);
+                    el.html('<a href="' + el.text() +'" target="_blank">' + el.text() +'</a>')
+                })
+            });
     },
 
     setupIndustriesChart: function (crsData) {
