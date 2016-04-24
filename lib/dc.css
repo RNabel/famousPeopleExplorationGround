@@ -30,6 +30,7 @@
 
 .dc-chart .pie-slice :hover {
     fill-opacity: .8;
+    fill: #00bfa5
 }
 
 .dc-chart .selected path {

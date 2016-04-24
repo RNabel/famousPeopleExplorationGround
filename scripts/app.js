@@ -3,10 +3,9 @@
  */
 var globalCrsData = null,
     dataSet = null,
-    filteredDataset = null,
-    filteredData = null,
     mapContainer = $("#country-chooser");
-var geoChart = dc.geoChoroplethChart("#country-chooser");
+var geoChart = dc.geoChoroplethChart("#country-chooser"),
+    genderChart = dc.pieChart("#gender-chart");
 // fatChart = dc.lineChart("#fat-amount"),
 // sugarChart = dc.lineChart("#sugar-amount");
 
@@ -70,33 +69,22 @@ var setup = {
                 return "Country code: " + d.key + "; " + (d.value ? d.value : 0) + " famous people";
             });
     },
-    // setupSugarChart: function (crsData) {
-    //     var sugarDimension = crsData.dimension(function (data) {
-    //         return data.sugars_group;
-    //     });
-    //
-    //     var sugarGroup = sugarDimension.group().reduceCount();
-    //
-    //     // Set up fat and sugar line charts.
-    //     sugarChart
-    //         .width(CHART_WIDTH)
-    //         .height(CHART_HEIGHT)
-    //         .transitionDuration(1000)
-    //         .margins({top: 30, right: 50, bottom: 35, left: 50})
-    //         .dimension(sugarDimension)
-    //         .x(d3.scale.linear().domain([0, 10]))
-    //         .elasticY(true)
-    //         .group(sugarGroup)
-    //         .colors(d3.scale.ordinal().domain([0]).range(["#004d40"]));
-    //
-    //     // Adapt tick format.
-    //     sugarChart.xAxis().tickFormat(function (d) {
-    //         return (d * 10) + "%";
-    //     });
-    //
-    //     sugarChart.xAxisLabel("Percentage of sugar")
-    //         .yAxisLabel("Number of items");
-    // },
+    setupGenderChart: function (crsData) {
+        var genderDimension = crsData.dimension(function (data) {
+            return data.gender;
+        });
+
+        var genderGroup = genderDimension.group();
+
+        // Set up fat and sugar line charts.
+        genderChart
+            .width(CHART_WIDTH)
+            .height(CHART_HEIGHT)
+            .transitionDuration(1000)
+            .dimension(genderDimension)
+            .group(genderGroup)
+            .colors(d3.scale.ordinal().domain([0,1]).range(["#4db6ac", "#009688"]));
+    },
     // setupFatChart: function (crsData) {
     //     var fatDimension = crsData.dimension(function (data) {
     //         return data.fat_group;
@@ -291,6 +279,12 @@ var setup = {
     //         customChart.render();
     //     })
     // },
+
+    /**
+     * Sets up and converts the data.
+     * @param data
+     * @returns {{}}
+     */
     cleanData: function (data) {
         var dateFormat = d3.time.format('%Y');
         var numberFormat = d3.format('.2f');
@@ -322,7 +316,7 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
         var countryGrp = countryDimension.group().reduceCount();
 
         setup.setupWorldMap(countryDimension, countryGrp, world_countries);
-
+        setup.setupGenderChart(crsData);
         // setup.setupSugarChart(crsData);
         // setup.setupFatChart(crsData);
         // setup.setupSelector(data);
