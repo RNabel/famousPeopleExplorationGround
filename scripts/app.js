@@ -204,30 +204,31 @@ var handlers = {
     handleInformationRequest: function (ev) {
         var self = this;
 
-        // Get name of the article.
-        var link = $(ev.target).parent().text().replace("Expand", "");
-        var linkSplit = link.split("/");
-        var title = linkSplit[linkSplit.length - 1];
-        title = title.replace(/_/g, " ");
-        var requestUrl = "http://en.wikipedia.org/w/api.php?action=query&prop=extracts&rvprop=content&titles=" + encodeURI(title) + "&format=json&callback=?";
-        // https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=Stack%20Overflow
+        var buttonText = $('.btn', $(self).parent()).text();
+        if (buttonText === "Expand") {
+            console.log("Expanding");
+            // Get name of the article.
+            var link = $(ev.target).parent().text().replace("Expand", "");
+            var linkSplit = link.split("/");
+            var title = linkSplit[linkSplit.length - 1];
+            title = title.replace(/_/g, " ");
+            var requestUrl = "http://en.wikipedia.org/w/api.php?action=query&prop=extracts&rvprop=content&titles=" + encodeURI(title) + "&format=json&callback=?";
+            // https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=Stack%20Overflow
 
-        $.getJSON(requestUrl, function (data) {
-            var insertionHTML = "<div class=\'additionalInfo\'>" + data.query.pages[Object.keys(data.query.pages)[0]].extract + "</div>";
-            $(self).parent().append(insertionHTML);
-        });
+            $.getJSON(requestUrl, function (data) {
+                var insertionHTML = "<div class=\'additionalInfo\'>" + data.query.pages[Object.keys(data.query.pages)[0]].extract + "</div>";
+                $(self).parent().append(insertionHTML);
 
-        // $.ajax({
-        //     headers: {
-        //         "Content-Type": "application/json; charset=UTF-8",
-        //         "Origin": "https://wikipedia.com"
-        //     },
-        //     url: requestUrl,
-        //     context: document.body
-        // }).done(function(dat) {
-        //     console.log(dat)
-        // });
-        console.log(title);
+                // Change content of button.
+                $('.btn', $(self).parent()).text("Collapse");
+            });
+        } else {
+            console.log("Collapsing");
+            // Delete content.
+            $('.additionalInfo', $(self).parent()).remove();
+            // Change button text.
+            $('.btn', $(self).parent()).text("Expand");
+        }
     }
 };
 
