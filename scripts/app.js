@@ -6,9 +6,9 @@ var globalCrsData = null,
     mapContainer = $("#country-chooser");
 var geoChart = dc.geoChoroplethChart("#country-chooser"),
     genderChart = dc.pieChart("#gender-chart"),
-    timelineChart = dc.lineChart("#timeline-chart");
-// fatChart = dc.lineChart("#fat-amount"),
-// sugarChart = dc.lineChart("#sugar-amount");
+    timelineChart = dc.lineChart("#timeline-chart"),
+    totalCount = dc.dataCount("#data-count"),
+    tableChart = dc.dataTable("#table-chart");
 
 var width = parseFloat(mapContainer.css('width').replace("px", "")),
     height = 500;
@@ -102,7 +102,32 @@ var setup = {
             .x(d3.time.scale().domain([new Date(1700, 0, 1), new Date(2015, 11, 31)]))
             .round(d3.time.month.round)
             // .alwaysUseRounding(true)
-            .xUnits(d3.time.months);
+            .xUnits(d3.time.months)
+            .elasticY(true);
+    },
+
+    // FIXME not working.
+    setupDataCount: function (crsData) {
+        var dimension = crsData;
+        var group = crsData.groupAll();
+
+        totalCount
+            .dimension(dimension).group(group);
+    },
+
+    setupDataTable: function (crsData) {
+        var dateDimension = crsData.dimension(function (d) {
+            return d.birthyear_date;
+        });
+
+        tableChart
+            .dimension(dateDimension)
+            .group(function (d) {
+                return d.birthyear_date.getFullYear()
+            })
+            .columns([
+                function(d) {return d.name}
+            ])
     },
 
     /**
@@ -144,6 +169,8 @@ d3.json("../data/world-countries.json", function (error, world_countries) {
         setup.setupWorldMap(countryDimension, countryGrp, world_countries);
         setup.setupGenderChart(crsData);
         setup.setupTimelineChart(crsData);
+        setup.setupDataCount(crsData);
+        setup.setupDataTable(crsData);
 
         dc.renderAll();
         console.log("Finished loading.");
