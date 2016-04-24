@@ -89,7 +89,7 @@ var setup = {
 
     setupTimelineChart: function(crsData) {
         var timeDimension = crsData.dimension(function (data) {
-            return data.birthyear;
+            return data.birthyear_date;
         });
 
         var totalGroup = timeDimension.group().reduceCount();
@@ -99,7 +99,10 @@ var setup = {
             .margins({top: 0, right: 50, bottom: 20, left: 40})
             .dimension(timeDimension)
             .group(totalGroup)
-            .x(d3.scale.linear().domain([1800, 2016]));
+            .x(d3.time.scale().domain([new Date(1700, 0, 1), new Date(2015, 11, 31)]))
+            .round(d3.time.month.round)
+            // .alwaysUseRounding(true)
+            .xUnits(d3.time.months);
     },
 
     /**
@@ -114,6 +117,7 @@ var setup = {
             // Convert dates.
             d.numlangs = parseInt(d.numlangs);
             d.country = d.countryCode3;
+            d.birthyear_date = dateFormat.parse(d.birthyear);
             d.birthyear = parseInt(d.birthyear);
             d.TotalPageViews = parseInt(d.TotalPageViews);
             d.PageViewsEnglish = parseInt(d.PageViewsEnglish);
